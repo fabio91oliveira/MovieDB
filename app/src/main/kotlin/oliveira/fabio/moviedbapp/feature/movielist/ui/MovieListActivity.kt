@@ -18,8 +18,12 @@ class MovieListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_list)
+        init()
+    }
+
+    private fun init() {
         initLiveDatas()
-        viewModel.getMovies("popularity.desc", "1")
+        getMovies()
     }
 
     private fun initLiveDatas() {
@@ -34,4 +38,6 @@ class MovieListActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun getMovies() = viewModel.getMovies("popularity.desc", "1")
 }

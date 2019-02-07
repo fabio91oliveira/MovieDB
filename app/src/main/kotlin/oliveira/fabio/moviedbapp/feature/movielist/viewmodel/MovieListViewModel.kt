@@ -6,7 +6,6 @@ import io.reactivex.disposables.CompositeDisposable
 import oliveira.fabio.moviedbapp.feature.movielist.repository.MovieRepository
 import oliveira.fabio.moviedbapp.model.MovieResponse
 import oliveira.fabio.moviedbapp.model.Response
-import retrofit2.HttpException
 
 class MovieListViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
@@ -16,15 +15,8 @@ class MovieListViewModel(private val movieRepository: MovieRepository) : ViewMod
     fun getMovies(sortBy: String, page: String) {
         compositeDisposable.add(
             movieRepository.getMovies(sortBy, page)
-                .subscribe({
-                    movieMutableLiveData.postValue(Response.success(it))
-                }, {
-                    var code: String? = null
-                    if (it is HttpException) {
-                        code = it.code().toString()
-                    }
-                    movieMutableLiveData.postValue(Response.error(it.message, code, null))
-                })
+                .subscribe({ movieMutableLiveData.postValue(Response.success(it)) },
+                    { movieMutableLiveData.postValue(Response.error(it.message, null)) })
         )
     }
 
