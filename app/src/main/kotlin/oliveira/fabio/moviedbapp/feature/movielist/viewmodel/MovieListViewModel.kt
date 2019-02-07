@@ -15,8 +15,10 @@ class MovieListViewModel(private val movieRepository: MovieRepository) : ViewMod
     fun getMovies(sortBy: String, page: String) {
         compositeDisposable.add(
             movieRepository.getMovies(sortBy, page)
-                .subscribe({ movieMutableLiveData.postValue(Response.success(it)) },
-                    { movieMutableLiveData.postValue(Response.error(it.message, null)) })
+                .subscribe({
+                    movieMutableLiveData.postValue(Response.success(it)) },
+                    {
+                        movieMutableLiveData.postValue(Response.error(it.message, null)) })
         )
     }
 

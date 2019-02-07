@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MovieDBApp</string>
+	<string name="app_name">MovieDBApp</string>
+	<string name="movie_list_main_title">List of Movies</string>
 </resources>

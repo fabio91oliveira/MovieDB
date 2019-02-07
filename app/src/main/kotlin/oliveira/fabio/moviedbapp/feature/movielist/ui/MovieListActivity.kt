@@ -3,16 +3,21 @@ package oliveira.fabio.moviedbapp.feature.movielist.ui
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.android.synthetic.main.activity_movie_list.*
 import oliveira.fabio.moviedbapp.R
-import oliveira.fabio.moviedbapp.di.Injector
+import oliveira.fabio.moviedbapp.feature.movielist.ui.adapter.MovieListAdapter
 import oliveira.fabio.moviedbapp.feature.movielist.viewmodel.MovieListViewModel
 import oliveira.fabio.moviedbapp.model.Response
+import org.koin.android.ext.android.inject
 
 class MovieListActivity : AppCompatActivity() {
 
-    private val viewModel by lazy {
-        ViewModelProviders.of(this, Injector.provideMovieListViewModelFactory()).get(MovieListViewModel::class.java)
+    private val viewModel: MovieListViewModel by inject()
+    private val adapter by lazy { MovieListAdapter(this) }
+
+    companion object {
+        private const val SPAN_COUNT = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +28,7 @@ class MovieListActivity : AppCompatActivity() {
 
     private fun init() {
         initLiveDatas()
+        initRecyclerView()
         getMovies()
     }
 
@@ -30,7 +36,12 @@ class MovieListActivity : AppCompatActivity() {
         viewModel.movieMutableLiveData.observe(this, Observer {
             when (it.statusEnum) {
                 Response.StatusEnum.SUCCESS -> {
-                    val a = ""
+                    it?.run {
+                        data?.run {
+                            adapter.addResult(results)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
                 }
                 Response.StatusEnum.ERROR -> {
                     val a = ""
@@ -40,4 +51,9 @@ class MovieListActivity : AppCompatActivity() {
     }
 
     private fun getMovies() = viewModel.getMovies("popularity.desc", "1")
+
+    private fun initRecyclerView() {
+        rvList.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        rvList.adapter = adapter
+    }
 }
