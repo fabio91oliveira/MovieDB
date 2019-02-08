@@ -44,6 +44,11 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onDestroy()
+    }
+
     private fun init() {
         initLoadingGlide()
         showLoading()
