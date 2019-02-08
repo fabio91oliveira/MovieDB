@@ -12,8 +12,9 @@ class MovieListViewModel(private val repository: MovieListRepository) : ViewMode
 
     private val compositeDisposable = CompositeDisposable()
     val movieMutableLiveData = MutableLiveData<Response<MoviesResponse>>()
+    val searchParameters = SearchParameters()
 
-    fun getMovies(searchParameters: SearchParameters) {
+    fun getMovies() {
         compositeDisposable.add(
             repository.getMovies(searchParameters.sortyBy, searchParameters.page)
                 .subscribe({

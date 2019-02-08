@@ -18,7 +18,6 @@ import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActi
 import oliveira.fabio.moviedbapp.feature.movielist.ui.adapter.MovieListAdapter
 import oliveira.fabio.moviedbapp.feature.movielist.viewmodel.MovieListViewModel
 import oliveira.fabio.moviedbapp.model.Response
-import oliveira.fabio.moviedbapp.model.SearchParameters
 import oliveira.fabio.moviedbapp.util.doRotateAnimation
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -27,10 +26,10 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
 
     private val viewModel: MovieListViewModel by viewModel()
     private val adapter by lazy { MovieListAdapter(this) }
-    private lateinit var searchParameters: SearchParameters
 
     companion object {
         private const val SPAN_COUNT = 2
+        private const val CURRENT_TAB = "CURRENT_TAB"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,10 +40,16 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
             init()
         } else {
             initToolbar()
+            if (savedInstanceState.getInt(CURRENT_TAB) != null) tabLayout.getTabAt(savedInstanceState.getInt(CURRENT_TAB))?.select()
             setupTabLayout()
             initLiveDatas()
             initRecyclerView()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(CURRENT_TAB, tabLayout.selectedTabPosition)
     }
 
     override fun onDestroy() {
@@ -74,17 +79,12 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     )
 
     private fun init() {
-        initSearchParameter()
         showLoading()
         initToolbar()
         setupTabLayout()
         initLiveDatas()
         initRecyclerView()
         getMovies()
-    }
-
-    private fun initSearchParameter() {
-        searchParameters = SearchParameters()
     }
 
     private fun initLiveDatas() {
@@ -111,7 +111,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun getMovies() = viewModel.getMovies(searchParameters)
+    private fun getMovies() = viewModel.getMovies()
 
     private fun initRecyclerView() {
         rvList.layoutManager = GridLayoutManager(
@@ -130,16 +130,16 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
             tab.setOnClickListener {
                 when (tab.contentDescription) {
                     resources.getString(R.string.movie_list_tab_popular) -> {
-                        searchParameters.setPopularSort()
+                        viewModel.searchParameters.setPopularSort()
                     }
                     resources.getString(R.string.movie_list_tab_release_date) -> {
-                        searchParameters.setReleaseDateSort()
+                        viewModel.searchParameters.setReleaseDateSort()
                     }
                     resources.getString(R.string.movie_list_tab_budget) -> {
-                        searchParameters.setBudgetSort()
+                        viewModel.searchParameters.setBudgetSort()
                     }
                     resources.getString(R.string.movie_list_tab_vote) -> {
-                        searchParameters.setVoteSort()
+                        viewModel.searchParameters.setVoteSort()
                     }
                 }
                 clearResultList()
