@@ -51,6 +51,7 @@ class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
             containerView.setOnClickListener {
                 onClickMovieListener.setOnClickMovieListener(result.id)
             }
+            txtRate.text = result.voteAverage.toString()
         }
 
         private fun loadImage(result: MoviesResponse.Result) {
@@ -68,7 +69,7 @@ class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
                     .apply(
                             RequestOptions().override(
                                     600,
-                                    800
+                                    500
                             ).placeholder(R.color.colorPrimaryDark).error(R.color.colorAccent).diskCacheStrategy(
                                     DiskCacheStrategy.ALL
                             )

@@ -1,6 +1,7 @@
 package oliveira.fabio.moviedbapp.feature.movielist.ui.activity
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -28,13 +29,14 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     private val adapter by lazy { MovieListAdapter(this) }
 
     companion object {
-        private const val SPAN_COUNT = 2
+        private var SPAN_COUNT = 3
         private const val CURRENT_TAB = "CURRENT_TAB"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_list)
+        setSpanConsideringOrientation()
 
         if (savedInstanceState == null) {
             init()
@@ -85,6 +87,13 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         initLiveDatas()
         initRecyclerView()
         getMovies()
+    }
+
+    private fun setSpanConsideringOrientation() {
+        SPAN_COUNT = when (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            true -> 5
+            else -> 3
+        }
     }
 
     private fun initLiveDatas() {

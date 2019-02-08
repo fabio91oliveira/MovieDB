@@ -17,11 +17,12 @@
         android:id="@+id/imgPoster"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_four"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@color/colorPrimaryDark"
         tools:layout_height="200dp"
         tools:layout_width="150dp"
+        tools:srcCompat="@color/colorPrimaryDark"
         tools:targetApi="lollipop" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -52,5 +53,26 @@
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         tools:text="@tools:sample/lorem/random" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgRate"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:layout_constraintEnd_toEndOf="@id/imgPoster"
+        app:layout_constraintTop_toTopOf="@id/imgPoster"
+        app:srcCompat="@drawable/ic_rate" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_four"
+        android:layout_marginEnd="@dimen/margin_ten"
+        android:layout_marginRight="@dimen/margin_ten"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_twenty_two"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/imgPoster"
+        app:layout_constraintTop_toTopOf="@id/imgPoster"
+        tools:text="10" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
