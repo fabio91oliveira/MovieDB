@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -98,29 +99,37 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun loadImage(urlImage: String) {
-        Glide.with(this).load(BASE_URL_IMAGES + urlImage)
-            .apply(
-                RequestOptions().placeholder(circularProgressDrawable).error(R.color.colorPrimaryDark).diskCacheStrategy(
-                    DiskCacheStrategy.ALL
+        var image: Any? = null
+
+        if (urlImage != null) {
+            image = BASE_URL_IMAGES + urlImage
+        } else {
+            ContextCompat.getDrawable(this, R.drawable.no_image_landscape)?.let { image = it }
+        }
+
+        Glide.with(this).load(image)
+                .apply(
+                        RequestOptions().placeholder(circularProgressDrawable).error(R.color.colorPrimaryDark).diskCacheStrategy(
+                                DiskCacheStrategy.ALL
+                        )
                 )
-            )
-            .transition(
-                DrawableTransitionOptions.withCrossFade()
-            ).into(imgBack)
+                .transition(
+                        DrawableTransitionOptions.withCrossFade()
+                ).into(imgBack)
     }
 
     private fun share(movieName: String) {
         val shareBody =
-            resources.getString(oliveira.fabio.moviedbapp.R.string.movie_detail_share_message_content, movieName)
+                resources.getString(oliveira.fabio.moviedbapp.R.string.movie_detail_share_message_content, movieName)
         val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here")
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
         startActivity(
-            Intent.createChooser(
-                sharingIntent,
-                resources.getString(R.string.movie_detail_share_message_title)
-            )
+                Intent.createChooser(
+                        sharingIntent,
+                        resources.getString(R.string.movie_detail_share_message_title)
+                )
         )
     }
 
