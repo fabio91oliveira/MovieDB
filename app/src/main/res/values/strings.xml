@@ -2,6 +2,10 @@
     <string name="app_name">MovieDBApp</string>
     <string name="movie_list_main_title">List of Movies</string>
     <string name="movie_list_about">About</string>
+    <string name="movie_list_tab_popular">Popular</string>
+    <string name="movie_list_tab_release_date">Release Date</string>
+    <string name="movie_list_tab_budget">Budget</string>
+    <string name="movie_list_tab_vote">Vote</string>
     <string name="about_dialog_title">About</string>
     <string name="about_dialog_message">This application was developed by Fabio Oliveira</string>
     <string name="about_dialog_email">fabio91oliveira@gmail.com</string>

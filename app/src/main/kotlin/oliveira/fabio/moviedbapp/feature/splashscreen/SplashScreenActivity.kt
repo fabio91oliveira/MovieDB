@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import oliveira.fabio.moviedbapp.R
 import oliveira.fabio.moviedbapp.feature.movielist.ui.activity.MovieListActivity
-import oliveira.fabio.moviedbapp.util.NetworkUtil
 
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -33,11 +32,7 @@ class SplashScreenActivity : AppCompatActivity() {
             override fun onAnimationStart(anim: Animation) {}
             override fun onAnimationRepeat(anim: Animation) {}
             override fun onAnimationEnd(anim: Animation) {
-                when (NetworkUtil.isConnected()) {
-                    true -> proceedToHome()
-                    false -> {
-                    }
-                }
+                proceedToHome()
             }
         })
         imgSplash.startAnimation(animation)

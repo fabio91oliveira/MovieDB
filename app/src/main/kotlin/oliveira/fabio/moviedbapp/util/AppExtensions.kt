@@ -33,9 +33,9 @@ fun String.getYearFromString(): String {
 fun TextView.changeStyle() {
     val spannable = SpannableString(text)
     spannable.setSpan(
-        ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorRed)),
-        0, text.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorRed)),
+            0, text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     spannable.setSpan(StyleSpan(Typeface.BOLD), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
@@ -44,9 +44,9 @@ fun TextView.changeStyle() {
 
 fun View.doRotateAnimation() {
     val rotate = RotateAnimation(
-        0f, 360f,
-        Animation.RELATIVE_TO_SELF, 0.5f,
-        Animation.RELATIVE_TO_SELF, 0.5f
+            0f, 360f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
     )
 
     rotate.duration = 900

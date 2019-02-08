@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -20,26 +21,27 @@ import java.util.*
 
 
 class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
-    RecyclerView.Adapter<MovieListAdapter.CustomViewHolder>() {
+        RecyclerView.Adapter<MovieListAdapter.CustomViewHolder>() {
 
     private var results: MutableList<MoviesResponse.Result> = mutableListOf()
 
     fun addResult(result: List<MoviesResponse.Result>) = results.addAll(result)
+    fun clearList() = results.clear()
     override fun getItemCount() = results.size
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) = holder.bind(results[position])
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        CustomViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                oliveira.fabio.moviedbapp.R.layout.item_movie,
-                parent,
-                false
+            CustomViewHolder(
+                    LayoutInflater.from(parent.context).inflate(
+                            oliveira.fabio.moviedbapp.R.layout.item_movie,
+                            parent,
+                            false
+                    )
             )
-        )
 
 
     inner class CustomViewHolder(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer {
+            RecyclerView.ViewHolder(containerView), LayoutContainer {
 
 
         fun bind(result: MoviesResponse.Result) {
@@ -52,18 +54,28 @@ class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
         }
 
         private fun loadImage(result: MoviesResponse.Result) {
-            Glide.with(imgPoster.context).load(BASE_URL_IMAGES + result.posterPath)
-                .apply(
-                    RequestOptions().override(
-                        600,
-                        800
-                    ).placeholder(R.color.colorPrimaryDark).error(R.color.colorAccent).diskCacheStrategy(
-                        DiskCacheStrategy.ALL
+            var image: Any? = null
+
+            if (result.posterPath != null) {
+                image = BASE_URL_IMAGES + result.posterPath
+            } else {
+                ContextCompat.getDrawable(containerView.context, R.drawable.no_image)?.let {
+                    image = it
+                }
+            }
+
+            Glide.with(imgPoster.context).load(image)
+                    .apply(
+                            RequestOptions().override(
+                                    600,
+                                    800
+                            ).placeholder(R.color.colorPrimaryDark).error(R.color.colorAccent).diskCacheStrategy(
+                                    DiskCacheStrategy.ALL
+                            )
                     )
-                )
-                .transition(
-                    DrawableTransitionOptions.withCrossFade()
-                ).into(imgPoster)
+                    .transition(
+                            DrawableTransitionOptions.withCrossFade()
+                    ).into(imgPoster)
         }
 
         private fun shouldChangeStyleTextIfIsCurrentYear(appCompatTextView: AppCompatTextView, year: String) {

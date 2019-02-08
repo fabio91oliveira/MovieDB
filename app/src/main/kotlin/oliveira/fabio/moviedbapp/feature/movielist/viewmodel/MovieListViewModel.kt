@@ -6,15 +6,16 @@ import io.reactivex.disposables.CompositeDisposable
 import oliveira.fabio.moviedbapp.feature.movielist.repository.MovieListRepository
 import oliveira.fabio.moviedbapp.model.MoviesResponse
 import oliveira.fabio.moviedbapp.model.Response
+import oliveira.fabio.moviedbapp.model.SearchParameters
 
 class MovieListViewModel(private val repository: MovieListRepository) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     val movieMutableLiveData = MutableLiveData<Response<MoviesResponse>>()
 
-    fun getMovies(sortBy: String, page: String) {
+    fun getMovies(searchParameters: SearchParameters) {
         compositeDisposable.add(
-            repository.getMovies(sortBy, page)
+            repository.getMovies(searchParameters.sortyBy, searchParameters.page)
                 .subscribe({
                     movieMutableLiveData.postValue(Response.success(it))
                 },

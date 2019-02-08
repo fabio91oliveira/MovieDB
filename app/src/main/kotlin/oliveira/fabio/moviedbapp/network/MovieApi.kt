@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface MovieApi {
     @GET("discover/movie")
-    fun getMovieList(@Query("sort_by") sortBy: String, @Query("page") page: String): Flowable<MoviesResponse>
+    fun getMovieList(@Query("sort_by") sortBy: String, @Query("page") page: Int): Flowable<MoviesResponse>
 
     @GET("movie/{id}")
     fun getMovieDetail(@Path("id") id: Int): Flowable<MovieDetailResponse>

@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,13 +18,16 @@ import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActi
 import oliveira.fabio.moviedbapp.feature.movielist.ui.adapter.MovieListAdapter
 import oliveira.fabio.moviedbapp.feature.movielist.viewmodel.MovieListViewModel
 import oliveira.fabio.moviedbapp.model.Response
+import oliveira.fabio.moviedbapp.model.SearchParameters
 import oliveira.fabio.moviedbapp.util.doRotateAnimation
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieListener {
+
     private val viewModel: MovieListViewModel by viewModel()
     private val adapter by lazy { MovieListAdapter(this) }
+    private lateinit var searchParameters: SearchParameters
 
     companion object {
         private const val SPAN_COUNT = 2
@@ -37,6 +41,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
             init()
         } else {
             initToolbar()
+            setupTabLayout()
             initLiveDatas()
             initRecyclerView()
         }
@@ -64,16 +69,22 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     }
 
     override fun setOnClickMovieListener(id: Int) = startActivity(
-        Intent(this, MovieDetailActivity::class.java)
-            .putExtra(MOVIE_ID, id)
+            Intent(this, MovieDetailActivity::class.java)
+                    .putExtra(MOVIE_ID, id)
     )
 
     private fun init() {
+        initSearchParameter()
         showLoading()
         initToolbar()
+        setupTabLayout()
         initLiveDatas()
         initRecyclerView()
         getMovies()
+    }
+
+    private fun initSearchParameter() {
+        searchParameters = SearchParameters()
     }
 
     private fun initLiveDatas() {
@@ -100,14 +111,47 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun getMovies() = viewModel.getMovies("popularity.desc", "1")
+    private fun getMovies() = viewModel.getMovies(searchParameters)
 
     private fun initRecyclerView() {
         rvList.layoutManager = GridLayoutManager(
-            this,
-            SPAN_COUNT
+                this,
+                SPAN_COUNT
         )
         rvList.adapter = adapter
+    }
+
+    private fun setupTabLayout() {
+        for (i in 0 until tabLayout.tabCount) {
+            val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+            val p = tab.layoutParams as ViewGroup.MarginLayoutParams
+            p.setMargins(50, 0, 0, 0)
+            tab.requestLayout()
+            tab.setOnClickListener {
+                when (tab.contentDescription) {
+                    resources.getString(R.string.movie_list_tab_popular) -> {
+                        searchParameters.setPopularSort()
+                    }
+                    resources.getString(R.string.movie_list_tab_release_date) -> {
+                        searchParameters.setReleaseDateSort()
+                    }
+                    resources.getString(R.string.movie_list_tab_budget) -> {
+                        searchParameters.setBudgetSort()
+                    }
+                    resources.getString(R.string.movie_list_tab_vote) -> {
+                        searchParameters.setVoteSort()
+                    }
+                }
+                clearResultList()
+                showLoading()
+                getMovies()
+            }
+        }
+    }
+
+    private fun clearResultList() {
+        adapter.clearList()
+        adapter.notifyDataSetChanged()
     }
 
     private fun showAboutDialog() {
@@ -122,13 +166,11 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         loading.doRotateAnimation()
         loading.visibility = VISIBLE
         rvList.visibility = GONE
-        toolbar.visibility = GONE
     }
 
     private fun hideLoading() {
         loading.clearAnimation()
         loading.visibility = GONE
         rvList.visibility = VISIBLE
-        toolbar.visibility = VISIBLE
     }
 }

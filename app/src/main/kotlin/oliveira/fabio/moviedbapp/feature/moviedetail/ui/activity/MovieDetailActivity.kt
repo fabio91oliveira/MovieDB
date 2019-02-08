@@ -86,7 +86,7 @@ class MovieDetailActivity : AppCompatActivity() {
         loadImage(movieDetailResponse.backdropPath)
         txtTitle.text = movieDetailResponse.originalTitle
         txtDuration.text = movieDetailResponse.getDurationFormatted()
-        txtBudget.text = movieDetailResponse.budget.toString()
+        txtBudget.text = movieDetailResponse.getBudgetFormatted()
         txtOverview.text = movieDetailResponse.overview
         btnShare.setOnClickListener { share(movieDetailResponse.originalTitle) }
         hideLoading()
