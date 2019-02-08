@@ -1,4 +1,12 @@
 <resources>
-	<string name="app_name">MovieDBApp</string>
-	<string name="movie_list_main_title">List of Movies</string>
+    <string name="app_name">MovieDBApp</string>
+    <string name="movie_list_main_title">List of Movies</string>
+    <string name="movie_list_about">About</string>
+    <string name="about_dialog_title">About</string>
+    <string name="about_dialog_message">This application was developed by Fabio Oliveira</string>
+    <string name="about_dialog_email">fabio91oliveira@gmail.com</string>
+    <string name="about_linkedin">https://www.linkedin.com/in/fabio91oliveira</string>
+    <string name="about_phone">+55 (21) 98191-4951</string>
+    <string name="movie_detail_share_message_content">Hey, the movie "%s" is so awesome! You should watch it!</string>
+    <string name="movie_detail_share_message_title">Sharing a movie</string>
 </resources>

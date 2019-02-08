@@ -57,12 +57,6 @@ dependencies {
     implementation deps.lifecycle.runtime
     annotationProcessor deps.lifecycle.compiler
 
-    // Room
-//    implementation deps.room.runtime
-//    implementation deps.room.rxjava2
-//    annotationProcessor deps.room.compiler
-//    kapt deps.room.compiler
-
     // Retrofit
     implementation deps.retrofit.runtime
     implementation deps.retrofit.gson

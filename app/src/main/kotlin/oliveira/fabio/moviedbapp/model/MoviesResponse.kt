@@ -1,16 +1,11 @@
 package oliveira.fabio.moviedbapp.model
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
-data class MovieResponse(
+data class MoviesResponse(
     val page: Int = 0,
     val results: List<Result> = listOf(),
     val totalPages: Int = 0,
     val totalResults: Int = 0
-) : Parcelable {
-    @Parcelize
+) {
     data class Result(
         val adult: Boolean = false,
         val backdropPath: String = "",
@@ -26,5 +21,5 @@ data class MovieResponse(
         val video: Boolean = false,
         val voteAverage: Double = 0.0,
         val voteCount: Int = 0
-    ) : Parcelable
+    )
 }

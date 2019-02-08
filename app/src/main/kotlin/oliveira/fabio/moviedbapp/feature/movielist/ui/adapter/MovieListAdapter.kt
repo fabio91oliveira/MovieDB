@@ -1,9 +1,9 @@
 package oliveira.fabio.moviedbapp.feature.movielist.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -12,15 +12,19 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_movie.*
 import oliveira.fabio.moviedbapp.R
-import oliveira.fabio.moviedbapp.model.MovieResponse
+import oliveira.fabio.moviedbapp.model.MoviesResponse
+import oliveira.fabio.moviedbapp.util.BASE_URL_IMAGES
+import oliveira.fabio.moviedbapp.util.changeStyle
+import oliveira.fabio.moviedbapp.util.getYearFromString
+import java.util.*
 
 
-class MovieListAdapter(val context: Context) :
+class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
     RecyclerView.Adapter<MovieListAdapter.CustomViewHolder>() {
 
-    private var results: MutableList<MovieResponse.Result> = mutableListOf()
+    private var results: MutableList<MoviesResponse.Result> = mutableListOf()
 
-    fun addResult(result: List<MovieResponse.Result>) = results.addAll(result)
+    fun addResult(result: List<MoviesResponse.Result>) = results.addAll(result)
     override fun getItemCount() = results.size
     override fun onBindViewHolder(holder: CustomViewHolder, position: Int) = holder.bind(results[position])
 
@@ -31,24 +35,24 @@ class MovieListAdapter(val context: Context) :
                 parent,
                 false
             )
-            , context
         )
 
 
-    class CustomViewHolder(override val containerView: View, private val context: Context) :
+    inner class CustomViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
-        companion object {
-            private const val BASE_URL = "http://image.tmdb.org/t/p/w185"
-        }
 
-        fun bind(result: MovieResponse.Result) {
+
+        fun bind(result: MoviesResponse.Result) {
             loadImage(result)
             txtTitle.text = result.originalTitle
-            txtDate.text = result.releaseDate
+            shouldChangeStyleTextIfIsCurrentYear(txtDate, result.releaseDate.getYearFromString())
+            containerView.setOnClickListener {
+                onClickMovieListener.setOnClickMovieListener(result.id)
+            }
         }
 
-        private fun loadImage(result: MovieResponse.Result) {
-            Glide.with(context).load(BASE_URL + result.posterPath)
+        private fun loadImage(result: MoviesResponse.Result) {
+            Glide.with(imgPoster.context).load(BASE_URL_IMAGES + result.posterPath)
                 .apply(
                     RequestOptions().override(
                         600,
@@ -61,5 +65,16 @@ class MovieListAdapter(val context: Context) :
                     DrawableTransitionOptions.withCrossFade()
                 ).into(imgPoster)
         }
+
+        private fun shouldChangeStyleTextIfIsCurrentYear(appCompatTextView: AppCompatTextView, year: String) {
+            appCompatTextView.text = year
+            if (isCurrentYear(year)) appCompatTextView.changeStyle()
+        }
+
+        private fun isCurrentYear(year: String) = year == Calendar.getInstance().get(Calendar.YEAR).toString()
+    }
+
+    interface OnClickMovieListener {
+        fun setOnClickMovieListener(id: Int)
     }
 }
