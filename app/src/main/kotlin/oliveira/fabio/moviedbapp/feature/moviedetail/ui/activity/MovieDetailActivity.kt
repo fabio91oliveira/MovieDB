@@ -7,18 +7,16 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import oliveira.fabio.moviedbapp.R
 import oliveira.fabio.moviedbapp.feature.moviedetail.viewmodel.MovieDetailViewModel
 import oliveira.fabio.moviedbapp.model.MovieDetailResponse
 import oliveira.fabio.moviedbapp.model.Response
-import oliveira.fabio.moviedbapp.util.BASE_URL_IMAGES
-import oliveira.fabio.moviedbapp.util.doRotateAnimation
+import oliveira.fabio.moviedbapp.util.BACKIMAGE_HEIGHT
+import oliveira.fabio.moviedbapp.util.BACKIMAGE_WIDTH
+import oliveira.fabio.moviedbapp.util.enums.ImageQualityEnum
+import oliveira.fabio.moviedbapp.util.extensions.doRotateAnimation
+import oliveira.fabio.moviedbapp.util.extensions.loadImageByGlide
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
@@ -28,19 +26,17 @@ class MovieDetailActivity : AppCompatActivity() {
         const val MOVIE_ID = "MOVIE_ID"
     }
 
-    private val circularProgressDrawable by lazy { CircularProgressDrawable(this) }
     private val idMovie by lazy { intent?.extras?.getInt(MOVIE_ID) }
     private val viewModel: MovieDetailViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
-        init()
-
         if (savedInstanceState == null) {
             init()
         } else {
             initLiveData()
+            initClickListeners()
             setupToolbar()
         }
     }
@@ -51,17 +47,13 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        initLoadingGlide()
+        hideErrorMessage()
+        hideContent()
         showLoading()
-        getMovieById()
         initLiveData()
+        initClickListeners()
         setupToolbar()
-    }
-
-    private fun initLoadingGlide() {
-        circularProgressDrawable.strokeWidth = 5f
-        circularProgressDrawable.centerRadius = 30f
-        circularProgressDrawable.start()
+        getMovieById()
     }
 
     private fun setupToolbar() {
@@ -73,18 +65,36 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private fun getMovieById() = idMovie?.run { viewModel.getMovieDetail(this) }
 
+    private fun initClickListeners() {
+        imgError.setOnClickListener {
+            hideErrorMessage()
+            hideContent()
+            showLoading()
+            getMovieById()
+        }
+        txtErrorMessage.setOnClickListener {
+            hideErrorMessage()
+            hideContent()
+            showLoading()
+            getMovieById() }
+    }
+
     private fun initLiveData() {
         viewModel.movieDetailMutableLiveData.observe(this, Observer {
             when (it.statusEnum) {
                 Response.StatusEnum.SUCCESS -> {
                     it?.data?.run {
                         setValues(this)
+                        showContent()
+                        hideErrorMessage()
                     }
                 }
                 Response.StatusEnum.ERROR -> {
-                    val a = ""
+                    showErrorMessage()
+                    hideContent()
                 }
             }
+            hideLoading()
         })
     }
 
@@ -99,49 +109,57 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun loadImage(urlImage: String) {
-        var image: Any? = null
+        var image = Any()
 
         if (urlImage != null) {
-            image = BASE_URL_IMAGES + urlImage
+            image = ImageQualityEnum.ORIGINAL.getUrlWithQualityPrefix() + urlImage
         } else {
             ContextCompat.getDrawable(this, R.drawable.no_image_landscape)?.let { image = it }
         }
-
-        Glide.with(this).load(image)
-                .apply(
-                        RequestOptions().placeholder(circularProgressDrawable).error(R.color.colorPrimaryDark).diskCacheStrategy(
-                                DiskCacheStrategy.ALL
-                        )
-                )
-                .transition(
-                        DrawableTransitionOptions.withCrossFade()
-                ).into(imgBack)
+        imgBack.loadImageByGlide(image, BACKIMAGE_WIDTH, BACKIMAGE_HEIGHT)
     }
 
     private fun share(movieName: String) {
         val shareBody =
-                resources.getString(oliveira.fabio.moviedbapp.R.string.movie_detail_share_message_content, movieName)
+            resources.getString(oliveira.fabio.moviedbapp.R.string.movie_detail_share_message_content, movieName)
         val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here")
+        sharingIntent.putExtra(
+            android.content.Intent.EXTRA_SUBJECT,
+            resources.getString(R.string.movie_detail_share_message_title)
+        )
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
         startActivity(
-                Intent.createChooser(
-                        sharingIntent,
-                        resources.getString(R.string.movie_detail_share_message_title)
-                )
+            Intent.createChooser(
+                sharingIntent,
+                resources.getString(R.string.movie_detail_share_message_title)
+            )
         )
+    }
+
+    private fun showErrorMessage() {
+        errorGroup.visibility = VISIBLE
     }
 
     private fun showLoading() {
         loading.doRotateAnimation()
         loading.visibility = VISIBLE
-        group.visibility = GONE
+    }
+
+    private fun showContent() {
+        group.visibility = VISIBLE
+    }
+
+    private fun hideErrorMessage() {
+        errorGroup.visibility = GONE
     }
 
     private fun hideLoading() {
         loading.clearAnimation()
         loading.visibility = GONE
-        group.visibility = VISIBLE
+    }
+
+    private fun hideContent() {
+        group.visibility = GONE
     }
 }

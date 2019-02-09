@@ -6,6 +6,8 @@
     <string name="movie_list_tab_release_date">Release Date</string>
     <string name="movie_list_tab_budget">Budget</string>
     <string name="movie_list_tab_vote">Vote</string>
+    <string name="movie_list_no_results_message">No results have been found, click here to try again!</string>
+    <string name="movie_error_message">Ops... An error has occurred, click here to try again!</string>
     <string name="about_dialog_title">About</string>
     <string name="about_dialog_message">This application was developed by Fabio Oliveira</string>
     <string name="about_dialog_email">fabio91oliveira@gmail.com</string>

@@ -19,7 +19,7 @@ import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActi
 import oliveira.fabio.moviedbapp.feature.movielist.ui.adapter.MovieListAdapter
 import oliveira.fabio.moviedbapp.feature.movielist.viewmodel.MovieListViewModel
 import oliveira.fabio.moviedbapp.model.Response
-import oliveira.fabio.moviedbapp.util.doRotateAnimation
+import oliveira.fabio.moviedbapp.util.extensions.doRotateAnimation
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
@@ -44,6 +44,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
             initToolbar()
             if (savedInstanceState.getInt(CURRENT_TAB) != null) tabLayout.getTabAt(savedInstanceState.getInt(CURRENT_TAB))?.select()
             setupTabLayout()
+            initClickListeners()
             initLiveDatas()
             initRecyclerView()
         }
@@ -76,14 +77,17 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     }
 
     override fun setOnClickMovieListener(id: Int) = startActivity(
-            Intent(this, MovieDetailActivity::class.java)
-                    .putExtra(MOVIE_ID, id)
+        Intent(this, MovieDetailActivity::class.java)
+            .putExtra(MOVIE_ID, id)
     )
 
     private fun init() {
+        hideErrorMessage()
+        hideContent()
         showLoading()
         initToolbar()
         setupTabLayout()
+        initClickListeners()
         initLiveDatas()
         initRecyclerView()
         getMovies()
@@ -96,22 +100,47 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         }
     }
 
+    private fun initClickListeners() {
+        imgError.setOnClickListener {
+            hideErrorMessage()
+            hideContent()
+            showLoading()
+            getMovies()
+        }
+        txtErrorMessage.setOnClickListener {
+            hideErrorMessage()
+            hideContent()
+            showLoading()
+            getMovies()
+        }
+    }
+
     private fun initLiveDatas() {
         viewModel.movieMutableLiveData.observe(this, Observer {
             when (it.statusEnum) {
                 Response.StatusEnum.SUCCESS -> {
                     it?.run {
                         data?.run {
-                            adapter.addResult(results)
-                            adapter.notifyDataSetChanged()
-                            hideLoading()
+                            when (results.isNotEmpty()) {
+                                true -> {
+                                    adapter.addResult(results)
+                                    adapter.notifyDataSetChanged()
+                                    hideErrorMessage()
+                                    showContent()
+                                }
+                                else -> {
+                                    hideContent()
+                                    showErrorMessage(R.string.movie_list_no_results_message)
+                                }
+                            }
                         }
                     }
                 }
                 Response.StatusEnum.ERROR -> {
-                    val a = ""
+                    showErrorMessage(R.string.movie_error_message)
                 }
             }
+            hideLoading()
         })
     }
 
@@ -124,8 +153,8 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
 
     private fun initRecyclerView() {
         rvList.layoutManager = GridLayoutManager(
-                this,
-                SPAN_COUNT
+            this,
+            SPAN_COUNT
         )
         rvList.adapter = adapter
     }
@@ -171,15 +200,30 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         dialog.show()
     }
 
+    private fun showErrorMessage(resourceString: Int) {
+        txtErrorMessage.text = resources.getString(resourceString)
+        errorGroup.visibility = VISIBLE
+    }
+
+    private fun hideErrorMessage() {
+        errorGroup.visibility = GONE
+    }
+
     private fun showLoading() {
         loading.doRotateAnimation()
         loading.visibility = VISIBLE
+    }
+
+    private fun showContent() {
+        rvList.visibility = VISIBLE
+    }
+
+    private fun hideContent() {
         rvList.visibility = GONE
     }
 
     private fun hideLoading() {
         loading.clearAnimation()
         loading.visibility = GONE
-        rvList.visibility = VISIBLE
     }
 }

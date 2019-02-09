@@ -7,14 +7,14 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import oliveira.fabio.moviedbapp.util.API_KEY
+import oliveira.fabio.moviedbapp.util.BASE_URL_REQUEST
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-private const val BASE_URL = "https://api.themoviedb.org/3/"
-private const val KEY = "83d01f18538cb7a275147492f84c3698"
 private const val CONNECT_TIME_OUT: Long = 1
 private const val READ_TIME_OUT: Long = 2
 private const val WRITE_TIME_OUT: Long = 3
@@ -23,7 +23,7 @@ fun <T> provideApi(clazz: Class<T>): T {
     val retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create(provideGson()))
         .client(provideOkHttpClient())
-        .baseUrl(BASE_URL)
+        .baseUrl(BASE_URL_REQUEST)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
@@ -48,7 +48,7 @@ private fun provideOkHttpClient(): OkHttpClient {
                 val originalHttpUrl = original.url()
 
                 val url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("api_key", KEY)
+                    .addQueryParameter("api_key", API_KEY)
                     .build()
 
                 val requestBuilder = original.newBuilder()

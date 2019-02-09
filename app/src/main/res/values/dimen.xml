@@ -7,6 +7,7 @@
     <dimen name="margin_fourteen">12dp</dimen>
     <dimen name="margin_sixteen">16dp</dimen>
     <dimen name="margin_twenty_four">24dp</dimen>
+    <dimen name="margin_forty">40dp</dimen>
 
     <dimen name="text_fourteen">14sp</dimen>
     <dimen name="text_eighteen">18sp</dimen>
