@@ -14,7 +14,7 @@ versions.rxjava2 = "2.2.6"
 versions.rxandroid = "2.1.0"
 versions.glide = "4.8.0"
 versions.koin = "1.0.2"
-versions.android_gradle_plugin = '3.2.1'
+versions.android_gradle_plugin = '3.3.1'
 
 def deps = [:]
 
