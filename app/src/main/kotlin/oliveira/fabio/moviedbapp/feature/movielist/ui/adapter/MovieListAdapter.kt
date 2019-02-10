@@ -47,13 +47,18 @@ class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
 
 
         fun bind(result: MoviesResponse.Result) {
-            loadImage(result)
+            defineImagePlaceHolder()
             txtTitle.text = result.originalTitle
             shouldChangeStyleTextIfIsCurrentYear(txtDate, result.releaseDate.getYearFromString())
             containerView.setOnClickListener {
                 onClickMovieListener.setOnClickMovieListener(result.id)
             }
             txtRate.text = result.voteAverage.toString()
+            loadImage(result)
+        }
+
+        private fun defineImagePlaceHolder() {
+            imgPoster.layoutParams.height = POSTER_IMAGE_SIZE
         }
 
         private fun loadImage(result: MoviesResponse.Result) {

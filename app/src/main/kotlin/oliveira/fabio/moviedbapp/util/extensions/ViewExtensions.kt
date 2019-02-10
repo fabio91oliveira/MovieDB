@@ -8,8 +8,8 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import oliveira.fabio.moviedbapp.R
 
-fun TextView.changeStyle() {
+fun AppCompatTextView.changeStyle() {
     val spannable = SpannableString(text)
     spannable.setSpan(
         ForegroundColorSpan(ContextCompat.getColor(context, R.color.colorRed)),

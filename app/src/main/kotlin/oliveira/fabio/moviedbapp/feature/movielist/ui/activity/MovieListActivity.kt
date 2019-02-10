@@ -17,7 +17,9 @@ import oliveira.fabio.moviedbapp.R
 import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActivity
 import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActivity.Companion.MOVIE_ID
 import oliveira.fabio.moviedbapp.feature.movielist.ui.adapter.MovieListAdapter
+import oliveira.fabio.moviedbapp.feature.movielist.ui.listener.InfiniteScrollListener
 import oliveira.fabio.moviedbapp.feature.movielist.viewmodel.MovieListViewModel
+import oliveira.fabio.moviedbapp.model.MoviesResponse
 import oliveira.fabio.moviedbapp.model.Response
 import oliveira.fabio.moviedbapp.util.extensions.doRotateAnimation
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -27,6 +29,14 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
 
     private val viewModel: MovieListViewModel by viewModel()
     private val adapter by lazy { MovieListAdapter(this) }
+    private val infiniteScrollListener =
+        object : InfiniteScrollListener() {
+            override fun onLoadMore(page: Int) {
+                viewModel.searchParameters.page = page
+                getMovies()
+            }
+        }
+
 
     companion object {
         private var SPAN_COUNT = 3
@@ -116,31 +126,36 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     }
 
     private fun initLiveDatas() {
-        viewModel.movieMutableLiveData.observe(this, Observer {
-            when (it.statusEnum) {
-                Response.StatusEnum.SUCCESS -> {
-                    it?.run {
-                        data?.run {
-                            when (results.isNotEmpty()) {
-                                true -> {
-                                    adapter.addResult(results)
-                                    adapter.notifyDataSetChanged()
-                                    hideErrorMessage()
-                                    showContent()
-                                }
-                                else -> {
-                                    hideContent()
-                                    showErrorMessage(R.string.movie_list_no_results_message)
+        viewModel.movieMutableLiveData.observe(this, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                when (it.statusEnum) {
+                    Response.StatusEnum.SUCCESS -> {
+                        it?.run {
+                            data?.run {
+                                when (results.isNotEmpty()) {
+                                    true -> {
+                                        viewModel.searchParameters.addResults(results)
+                                        addResult(results)
+                                        hideErrorMessage()
+                                        showContent()
+                                    }
+                                    else -> {
+                                        hideContent()
+                                        showErrorMessage(R.string.movie_list_no_results_message)
+                                    }
                                 }
                             }
                         }
                     }
+                    Response.StatusEnum.ERROR -> {
+                        if (viewModel.isPageEqualsOne()) {
+                            hideContent()
+                            showErrorMessage(R.string.movie_error_message)
+                        }
+                    }
                 }
-                Response.StatusEnum.ERROR -> {
-                    showErrorMessage(R.string.movie_error_message)
-                }
+                hideLoading()
             }
-            hideLoading()
         })
     }
 
@@ -152,11 +167,18 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     private fun getMovies() = viewModel.getMovies()
 
     private fun initRecyclerView() {
-        rvList.layoutManager = GridLayoutManager(
-            this,
-            SPAN_COUNT
-        )
+        val layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        rvList.layoutManager = layoutManager
         rvList.adapter = adapter
+        infiniteScrollListener.setLayoutManager(layoutManager)
+        infiniteScrollListener.setCurrentPage(viewModel.searchParameters.page)
+        rvList.addOnScrollListener(infiniteScrollListener)
+        if (viewModel.searchParameters.results.isNotEmpty()) {
+            addResult(viewModel.searchParameters.results)
+            hideErrorMessage()
+            hideLoading()
+            showContent()
+        }
     }
 
     private fun setupTabLayout() {
@@ -180,14 +202,23 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                         viewModel.searchParameters.setVoteSort()
                     }
                 }
+                viewModel.searchParameters.resetPageCount()
                 clearResultList()
+                hideErrorMessage()
+                hideContent()
                 showLoading()
                 getMovies()
             }
         }
     }
 
+    private fun addResult(results: List<MoviesResponse.Result>) {
+        adapter.addResult(results)
+        adapter.notifyDataSetChanged()
+    }
+
     private fun clearResultList() {
+        viewModel.searchParameters.clearResults()
         adapter.clearList()
         adapter.notifyDataSetChanged()
     }
