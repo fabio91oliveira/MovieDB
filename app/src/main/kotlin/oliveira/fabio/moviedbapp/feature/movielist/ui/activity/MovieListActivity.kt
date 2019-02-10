@@ -202,6 +202,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                 hideErrorMessage()
                 hideContent()
                 showLoading()
+                initRecyclerView()
                 getMovies()
             }
         }
