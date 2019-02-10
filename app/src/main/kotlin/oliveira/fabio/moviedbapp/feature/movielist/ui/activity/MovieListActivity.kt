@@ -29,14 +29,6 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
 
     private val viewModel: MovieListViewModel by viewModel()
     private val adapter by lazy { MovieListAdapter(this) }
-    private val infiniteScrollListener =
-        object : InfiniteScrollListener() {
-            override fun onLoadMore(page: Int) {
-                viewModel.searchParameters.page = page
-                getMovies()
-            }
-        }
-
 
     companion object {
         private var SPAN_COUNT = 3
@@ -170,9 +162,12 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         val layoutManager = GridLayoutManager(this, SPAN_COUNT)
         rvList.layoutManager = layoutManager
         rvList.adapter = adapter
-        infiniteScrollListener.setLayoutManager(layoutManager)
-        infiniteScrollListener.setCurrentPage(viewModel.searchParameters.page)
-        rvList.addOnScrollListener(infiniteScrollListener)
+        rvList.addOnScrollListener(object : InfiniteScrollListener(layoutManager, viewModel.searchParameters.page) {
+            override fun onLoadMore(page: Int) {
+                viewModel.searchParameters.page = page
+                getMovies()
+            }
+        })
         if (viewModel.searchParameters.results.isNotEmpty()) {
             addResult(viewModel.searchParameters.results)
             hideErrorMessage()
