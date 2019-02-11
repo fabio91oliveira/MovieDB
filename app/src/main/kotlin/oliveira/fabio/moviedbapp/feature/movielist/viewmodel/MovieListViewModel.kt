@@ -9,11 +9,11 @@ import oliveira.fabio.moviedbapp.model.Response
 import oliveira.fabio.moviedbapp.model.SearchParameters
 import oliveira.fabio.moviedbapp.util.Event
 
-class MovieListViewModel(private val repository: MovieListRepository) : ViewModel() {
+class MovieListViewModel(private val repository: MovieListRepository, var searchParameters: SearchParameters) :
+    ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     val movieMutableLiveData = MutableLiveData<Event<Response<MoviesResponse>>>()
-    val searchParameters = SearchParameters()
 
     fun isPageEqualsOne() = searchParameters.page == 1
 

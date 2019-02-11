@@ -14,6 +14,8 @@ versions.rxjava2 = "2.2.6"
 versions.rxandroid = "2.1.0"
 versions.glide = "4.8.0"
 versions.koin = "1.0.2"
+versions.junit = "4.12"
+versions.mockito = "2.19.0"
 versions.android_gradle_plugin = '3.3.1'
 
 def deps = [:]
@@ -58,6 +60,7 @@ def koin = [:]
 koin.android = "org.koin:koin-android:$versions.koin"
 koin.lifecycle = "org.koin:koin-android-scope:$versions.koin"
 koin.viewmodel = "org.koin:koin-android-viewmodel:$versions.koin"
+koin.test = "org.koin:koin-test:$versions.koin"
 deps.koin = koin
 
 def glide = [:]
@@ -67,6 +70,13 @@ deps.glide = glide
 
 deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
 deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+
+deps.junit = "junit:junit:$versions.junit"
+
+def mockito = [:]
+mockito.core = "org.mockito:mockito-core:$versions.mockito"
+mockito.android = "org.mockito:mockito-android:$versions.mockito"
+deps.mockito = mockito
 
 def build_versions = [:]
 build_versions.min_sdk = 15

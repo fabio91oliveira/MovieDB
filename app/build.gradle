@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion build_versions.target_sdk
@@ -27,10 +26,6 @@ android {
         androidTest.java.srcDirs += 'src/androidTest/kotlin'
         main { assets.srcDirs = ['src/main/assets', 'src/androidTest/assets/'] }
     }
-//    kapt {
-//        mapDiagnosticLocations = true
-//        generateStubs = true
-//    }
     androidExtensions {
         experimental = true
     }
@@ -77,4 +72,10 @@ dependencies {
     implementation deps.koin.android
     implementation deps.koin.lifecycle
     implementation deps.koin.viewmodel
+
+    testImplementation deps.junit
+    testImplementation deps.koin.test
+    testImplementation deps.mockito.core
+    androidTestImplementation deps.mockito.android
+
 }

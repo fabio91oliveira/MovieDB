@@ -6,11 +6,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_movie.*
 import oliveira.fabio.moviedbapp.R
@@ -58,6 +53,7 @@ class MovieListAdapter(val onClickMovieListener: OnClickMovieListener) :
         }
 
         private fun defineImagePlaceHolder() {
+            imgPoster.maxHeight = POSTER_IMAGE_SIZE
             imgPoster.layoutParams.height = POSTER_IMAGE_SIZE
         }
 
