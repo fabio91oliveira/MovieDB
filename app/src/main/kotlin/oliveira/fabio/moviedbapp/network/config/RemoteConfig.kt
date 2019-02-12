@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import oliveira.fabio.moviedbapp.util.API_KEY
-import oliveira.fabio.moviedbapp.util.BASE_URL_REQUEST
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,11 +18,11 @@ private const val CONNECT_TIME_OUT: Long = 1
 private const val READ_TIME_OUT: Long = 2
 private const val WRITE_TIME_OUT: Long = 3
 
-fun <T> provideApi(clazz: Class<T>): T {
+fun <T> provideApi(clazz: Class<T>, url: String): T {
     val retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create(provideGson()))
         .client(provideOkHttpClient())
-        .baseUrl(BASE_URL_REQUEST)
+        .baseUrl(url)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()

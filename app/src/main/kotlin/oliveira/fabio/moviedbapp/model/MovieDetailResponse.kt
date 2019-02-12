@@ -33,6 +33,8 @@ data class MovieDetailResponse(
     val voteCount: Int = 0
 ) {
 
+    fun isAnEmptyRequest() = id == 0
+
     data class ProductionCompany(
         val id: Int = 0,
         val logoPath: Any? = Any(),

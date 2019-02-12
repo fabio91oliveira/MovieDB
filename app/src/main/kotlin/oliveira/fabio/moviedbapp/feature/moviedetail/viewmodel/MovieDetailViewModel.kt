@@ -16,7 +16,9 @@ class MovieDetailViewModel(private val repository: MovieDetailRepository) : View
         compositeDisposable.add(
             repository.getMovieById(id)
                 .subscribe({
-                    movieDetailMutableLiveData.postValue(Response.success(it))
+                    if (!it.isAnEmptyRequest()) movieDetailMutableLiveData.postValue(Response.success(it)) else movieDetailMutableLiveData.postValue(
+                        Response.error(null, null)
+                    )
                 }, {
                     movieDetailMutableLiveData.postValue(Response.error(it.message, null))
                 })

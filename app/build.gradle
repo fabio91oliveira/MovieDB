@@ -29,6 +29,10 @@ android {
     androidExtensions {
         experimental = true
     }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        animationsDisabled = true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -74,8 +78,18 @@ dependencies {
     implementation deps.koin.viewmodel
 
     testImplementation deps.junit
-    testImplementation deps.koin.test
+    testImplementation deps.mockserver
     testImplementation deps.mockito.core
-    androidTestImplementation deps.mockito.android
+    testImplementation deps.requestmatcher
+    testImplementation deps.koin.test
+    androidTestUtil deps.espresso.orchestrator
+    androidTestImplementation deps.koin.test
+    androidTestImplementation deps.espresso.runner
+    androidTestImplementation deps.espresso.rules
+    androidTestImplementation deps.espresso.contrib
+    androidTestImplementation deps.espresso.core
+    androidTestImplementation deps.espresso.intent
+    androidTestImplementation deps.requestmatcher
+    androidTestImplementation deps.mockserver
 
 }

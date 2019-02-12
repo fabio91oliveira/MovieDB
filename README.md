@@ -10,12 +10,33 @@ The app simply request MovieDB API to get a movie list
 
 ## Basically using
 * Kotlin
-* Koin
-* Androidx Refactor Library
-* Lifecycle library (LiveData and ViewModels)
+* Androidx Library
+* Lifecycle Library (LiveData and ViewModels)
 * Retrofit
-* Glide
+* OkHttp
 * Rx
+* Glide
+* Koin
+
+## For tests
+* JUnit
+* RequestMatcher
+* MockServer
+* Mockito
+* Koin-Test
+* Espresso
+
+## Application Features
+* List API from MovieDB
+* Infinite Scroll
+* Details of movie
+* Share content for your contacts
+
+## Tests
+* Unit Tests
+* Instrumentation Tests
+
+
 
 If you are interested about doing something in this app or have some idea. Contact me!
 <a href="https://www.linkedin.com/in/fabio91oliveira" target="_blank">https://www.linkedin.com/in/fabio91oliveira</a>

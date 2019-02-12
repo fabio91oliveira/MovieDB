@@ -1,0 +1,67 @@
+{
+    "adult": false,
+    "backdrop_path": "/59qyrVGLLtrcuFtJGdixzn7H4OI.jpg",
+    "belongs_to_collection": null,
+    "budget": 10000000,
+    "genres": [
+        {
+            "id": 10752,
+            "name": "War"
+        },
+        {
+            "id": 18,
+            "name": "Drama"
+        },
+        {
+            "id": 12,
+            "name": "Adventure"
+        },
+        {
+            "id": 28,
+            "name": "Action"
+        }
+    ],
+    "homepage": null,
+    "id": 505954,
+    "imdb_id": "tt8820590",
+    "original_language": "ru",
+    "original_title": "Т-34",
+    "overview": "1941 - WWii. the second lieutenant Nikolai ivushkin, commander of a t-34, engages in an unequal battle against the tank ace Klaus Jager in a battle near moscow. His mission is more of a suicide - to destroy a dozen german tanks, all by himself. that said, luck does favour the bold. He wins the battle, barely survives, but loses his tank and lands himself in captivity for three long years... there was little to no chance for ivushkin and Jager to meet again, but the war knows how to throw a curve ball.in the spring of 1944, the Wehrmacht commands Jager to take charge of the ohrdruf  re range and turn it into a training center for elite german armored forces, using the latest t-34 as a running target. this is how Jager and ivushkin cross paths again. Jager o ers ivushkin to become the commander of a legendary tank and pick his crew from fellow camp prisoners. Nothing goes according to plan, though, when ivushkin uses exercises for a daring and carefully planned escape.",
+    "popularity": 613.756,
+    "poster_path": "/wNJF8R5QE6nBT7DQoKk8t6YD1MM.jpg",
+    "production_companies": [
+        {
+            "id": 104482,
+            "logo_path": "/17CSuJBYVYlzzTZCLSXgM5edOkx.png",
+            "name": "AMedia",
+            "origin_country": "RU"
+        },
+        {
+            "id": 54307,
+            "logo_path": "/iXFmDKug5PtHfzp7XXwr4I2nQjG.png",
+            "name": "Mars Media Entertainment",
+            "origin_country": "RU"
+        }
+    ],
+    "production_countries": [
+        {
+            "iso_3166_1": "RU",
+            "name": "Russia"
+        }
+    ],
+    "release_date": "2018-12-27",
+    "revenue": 0,
+    "runtime": 139,
+    "spoken_languages": [
+        {
+            "iso_639_1": "ru",
+            "name": "Pусский"
+        }
+    ],
+    "status": "Released",
+    "tagline": "Fast And Furious On Tanks",
+    "title": "T-34",
+    "video": false,
+    "vote_average": 4.7,
+    "vote_count": 72
+}

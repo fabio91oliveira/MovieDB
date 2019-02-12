@@ -15,7 +15,11 @@ versions.rxandroid = "2.1.0"
 versions.glide = "4.8.0"
 versions.koin = "1.0.2"
 versions.junit = "4.12"
+versions.requestmatcher = "2.2.0"
+versions.mockserver = "3.12.0"
 versions.mockito = "2.19.0"
+versions.espresso = "3.1.0-alpha3"
+versions.test = "1.1.0-alpha3"
 versions.android_gradle_plugin = '3.3.1'
 
 def deps = [:]
@@ -72,11 +76,21 @@ deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${ve
 deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
 
 deps.junit = "junit:junit:$versions.junit"
+deps.requestmatcher = "br.com.concretesolutions:requestmatcher:$versions.requestmatcher"
+deps.mockserver = "com.squareup.okhttp3:mockwebserver:$versions.mockserver"
 
 def mockito = [:]
 mockito.core = "org.mockito:mockito-core:$versions.mockito"
-mockito.android = "org.mockito:mockito-android:$versions.mockito"
 deps.mockito = mockito
+
+def espresso = [:]
+espresso.core = "androidx.test.espresso:espresso-core:$versions.espresso"
+espresso.intent = "androidx.test.espresso:espresso-intents:$versions.espresso"
+espresso.contrib = "androidx.test.espresso:espresso-contrib:$versions.espresso"
+espresso.runner = "androidx.test:runner:$versions.test"
+espresso.rules = "androidx.test:rules:$versions.test"
+espresso.orchestrator = "androidx.test:orchestrator:$versions.test"
+deps.espresso = espresso
 
 def build_versions = [:]
 build_versions.min_sdk = 15
