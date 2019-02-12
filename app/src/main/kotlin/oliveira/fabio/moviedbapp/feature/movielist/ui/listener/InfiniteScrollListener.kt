@@ -31,17 +31,13 @@ abstract class InfiniteScrollListener(
             }
         }
 
-        if (isLoading.not() && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
-            currentPage++
-            onLoadMore(currentPage)
-            isLoading = true
+        if (firstVisibleItem != -1) {
+            if (isLoading.not() && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
+                currentPage++
+                onLoadMore(currentPage)
+                isLoading = true
+            }
         }
-    }
-
-    fun resetState() {
-        currentPage = 1
-        previousTotalItemCount = 0
-        isLoading = true
     }
 
     abstract fun onLoadMore(page: Int)
