@@ -3,6 +3,8 @@ package oliveira.fabio.moviedbapp.model
 data class SearchParameters(
     var results: MutableList<MoviesResponse.Result> = mutableListOf(),
     var sortyBy: String = POPULAR,
+    var queryMovie: String = "",
+    var isQuerySearch: Boolean = false,
     var page: Int = 1
 ) {
 

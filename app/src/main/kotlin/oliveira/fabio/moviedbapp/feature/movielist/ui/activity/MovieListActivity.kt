@@ -3,15 +3,17 @@ package oliveira.fabio.moviedbapp.feature.movielist.ui.activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.text.SpannableStringBuilder
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.activity_movie_list.*
 import oliveira.fabio.moviedbapp.R
 import oliveira.fabio.moviedbapp.feature.moviedetail.ui.activity.MovieDetailActivity
@@ -30,9 +32,15 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     private val viewModel: MovieListViewModel by viewModel()
     private val adapter by lazy { MovieListAdapter(this) }
 
+    private lateinit var removeButton: AppCompatImageView
+    private lateinit var searchPlate: View
+    private lateinit var searchView: SearchView
+    private lateinit var searchAutoComplete: SearchView.SearchAutoComplete
+
     companion object {
         private var SPAN_COUNT = 3
         private const val CURRENT_TAB = "CURRENT_TAB"
+        private const val EMPTY_TEXT = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,13 +73,42 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.toolbar_menu, menu)
+
+        val menuItem = menu.findItem(R.id.movieSearch)
+        searchView = menuItem?.actionView as SearchView
+        searchPlate = searchView.findViewById(androidx.appcompat.R.id.search_plate) as View
+        removeButton = searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
+        removeButton.setOnClickListener {
+            clearSearchText()
+            changeStatusRemoveButton(false)
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+                if (s.isNotEmpty()) {
+                    unselectTabs()
+                    viewModel.setSearchByText(true)
+                    viewModel.getMovieByText(s)
+                    loading(true)
+                }
+                return false
+            }
+        })
+        searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text)
+        val ssb = SpannableStringBuilder(EMPTY_TEXT)
+        ssb.append(EMPTY_TEXT)
+        searchAutoComplete.hint = resources.getString(R.string.movie_list_search_text)
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.colorWhite))
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_about -> {
-                showAboutDialog()
+            R.id.movieSearch -> {
+                MenuItemCompat.expandActionView(item)
                 return true
             }
         }
@@ -126,6 +163,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                             data?.run {
                                 when (results.isNotEmpty()) {
                                     true -> {
+                                        if (viewModel.isSearchByText()) clearResultList()
                                         viewModel.searchParameters.addResults(results)
                                         addResult(results)
                                         hideErrorMessage()
@@ -146,6 +184,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                         }
                     }
                 }
+                loading(false)
                 hideLoading()
             }
         })
@@ -164,8 +203,10 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         rvList.adapter = adapter
         rvList.addOnScrollListener(object : InfiniteScrollListener(layoutManager, viewModel.searchParameters.page) {
             override fun onLoadMore(page: Int) {
-                viewModel.searchParameters.page = page
-                getMovies()
+                if (!viewModel.isSearchByText()) {
+                    viewModel.searchParameters.page = page
+                    getMovies()
+                }
             }
         })
         if (viewModel.searchParameters.results.isNotEmpty()) {
@@ -180,7 +221,6 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         for (i in 0 until tabLayout.tabCount) {
             val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val p = tab.layoutParams as ViewGroup.MarginLayoutParams
-            p.setMargins(50, 0, 0, 0)
             tab.requestLayout()
             tab.setOnClickListener {
                 when (tab.contentDescription) {
@@ -197,6 +237,11 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                         viewModel.searchParameters.setVoteSort()
                     }
                 }
+                tab.isSelected = true
+                clearSearchText()
+                searchView.onActionViewCollapsed()
+                changeTabLayoutSelectedTabColor(R.color.colorRed)
+                viewModel.setSearchByText(false)
                 viewModel.searchParameters.resetPageCount()
                 clearResultList()
                 hideErrorMessage()
@@ -205,6 +250,14 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                 initRecyclerView()
                 getMovies()
             }
+        }
+    }
+
+    private fun unselectTabs() {
+        changeTabLayoutSelectedTabColor(R.color.colorPrimary)
+        for (i in 0 until tabLayout.tabCount) {
+            val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+            tab.isSelected = false
         }
     }
 
@@ -217,14 +270,6 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         viewModel.searchParameters.clearResults()
         adapter.clearList()
         adapter.notifyDataSetChanged()
-    }
-
-    private fun showAboutDialog() {
-        val dialog = BottomSheetDialog(this)
-        val bottomSheet = layoutInflater.inflate(R.layout.dialog_bottom_about, null)
-        bottomSheet.setOnClickListener { dialog.dismiss() }
-        dialog.setContentView(bottomSheet)
-        dialog.show()
     }
 
     private fun showErrorMessage(resourceString: Int) {
@@ -253,4 +298,33 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
         loading.clearAnimation()
         loading.visibility = GONE
     }
+
+
+    private fun loading(isLoading: Boolean) {
+        if (isLoading && !searchAutoComplete.text.isEmpty()) {
+            changeStatusRemoveButton(false)
+            if (searchPlate.findViewById<View>(R.id.search_progress_bar) != null)
+                searchPlate.findViewById<View>(R.id.search_progress_bar).animate().setDuration(200).alpha(1f).start()
+            else {
+                val v = LayoutInflater.from(this).inflate(R.layout.icon_loading, null)
+                (searchPlate as ViewGroup).addView(v, 2)
+            }
+        } else {
+            if (searchPlate.findViewById<View>(R.id.search_progress_bar) != null) {
+                searchPlate.findViewById<View>(R.id.search_progress_bar).animate().setDuration(200).alpha(0f).start()
+                (searchPlate as ViewGroup).removeViewAt(2)
+                changeStatusRemoveButton(true)
+            }
+        }
+    }
+
+    private fun changeStatusRemoveButton(isVisible: Boolean) {
+        removeButton.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun clearSearchText() = searchAutoComplete.setText("")
+
+    private fun changeTabLayoutSelectedTabColor(color: Int) =
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, color))
+
 }

@@ -13,4 +13,7 @@ interface MovieApi {
 
     @GET("movie/{id}")
     fun getMovieDetail(@Path("id") id: Int): Flowable<MovieDetailResponse>
+
+    @GET("search/movie")
+    fun searchMovie(@Query("query") query: String): Flowable<MoviesResponse>
 }

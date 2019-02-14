@@ -30,6 +30,23 @@ class MovieListViewModelTest : KoinTest {
         Assert.assertEquals(movieListViewModel.isPageEqualsOne(), false)
     }
 
+    @Test
+    fun shouldGetReturnTrueFromStatusQuery() {
+        movieListViewModel.searchParameters.isQuerySearch = true
+        Assert.assertEquals(movieListViewModel.isSearchByText(), true)
+    }
+
+    @Test
+    fun shouldGetReturnFalseFromStatusQuery() {
+        movieListViewModel.searchParameters.isQuerySearch = false
+        Assert.assertEquals(movieListViewModel.isSearchByText(), false)
+    }
+
+    @Test
+    fun shouldChangeStatusOfParameter() {
+        movieListViewModel.setSearchByText(false)
+    }
+
     @After
     fun after() {
         closeKoin()

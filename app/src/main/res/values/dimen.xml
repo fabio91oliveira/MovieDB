@@ -4,7 +4,7 @@
     <dimen name="margin_four">4dp</dimen>
     <dimen name="margin_six">6dp</dimen>
     <dimen name="margin_ten">10dp</dimen>
-    <dimen name="margin_fourteen">12dp</dimen>
+    <dimen name="margin_twelve">12dp</dimen>
     <dimen name="margin_sixteen">16dp</dimen>
     <dimen name="margin_twenty_four">24dp</dimen>
     <dimen name="margin_forty">40dp</dimen>

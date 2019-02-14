@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
@@ -21,12 +22,14 @@ class MovieListRobot(private val rule: ActivityTestRule<MovieListActivity>, priv
 
     companion object {
         private const val MOVIE_LIST_REQUEST_PATH = "/discover/movie"
+        private const val MOVIE_LIST_SEARCH_REQUEST_PATH = "/search/movie"
         private const val MOVIE_LIST_RESPONSE_JSON = "movie_list_response.json"
         private const val MOVIE_LIST_RESPONSE_JSON_NO_RESULT = "movie_list_response_no_result.json"
         private const val MOVIE_DETAIL_RESPONSE_JSON = "movie_detail_response.json"
 
         private const val MOVIE_PATH_REQUEST = "/movie/"
         private const val MOVIE_ID = "424694"
+        private const val PARAMETER_FOR_RESEARCH = "t"
     }
 
     val intent = Intent()
@@ -67,6 +70,12 @@ class MovieListRobot(private val rule: ActivityTestRule<MovieListActivity>, priv
             .pathIs(MOVIE_PATH_REQUEST + MOVIE_ID)
     }
 
+    fun setupSearchRequest() {
+        server.addFixture(MOVIE_LIST_RESPONSE_JSON)
+            .ifRequestMatches()
+            .pathIs(MOVIE_LIST_SEARCH_REQUEST_PATH)
+    }
+
     fun shouldRecyclerViewDisplay() {
         onView(withId(R.id.rvList)).check(matches(isDisplayed()))
     }
@@ -88,5 +97,15 @@ class MovieListRobot(private val rule: ActivityTestRule<MovieListActivity>, priv
 
     fun shouldMovieDetailActivityOpen() {
         intended(hasComponent(MovieDetailActivity::class.java.name))
+    }
+
+    fun shouldClickSearchButtonMenu() {
+        onView(withId(R.id.movieSearch))
+            .perform(click())
+    }
+
+    fun shouldTypeOnSearchViewInput() {
+        onView(withId(androidx.appcompat.R.id.search_src_text))
+            .perform(typeText(PARAMETER_FOR_RESEARCH))
     }
 }

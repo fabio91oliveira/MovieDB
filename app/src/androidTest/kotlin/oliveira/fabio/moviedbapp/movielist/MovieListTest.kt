@@ -44,15 +44,6 @@ class MovieListTest : BaseTest() {
     }
 
     @Test
-    fun shouldShowErrorScreen() {
-        robots {
-            setupMovieRequestError()
-            initActivity()
-            shouldShouldErrorMessage()
-        }
-    }
-
-    @Test
     fun shouldAppearMovieDetailScreen() {
         robots {
             initIntent()
@@ -62,6 +53,27 @@ class MovieListTest : BaseTest() {
             shouldClickFirstItem()
             shouldMovieDetailActivityOpen()
             releaseIntent()
+        }
+    }
+
+    @Test
+    fun shouldSearchByTextAndExistAtLeastOneItem() {
+        robots {
+            setupMovieRequest()
+            setupSearchRequest()
+            initActivity()
+            shouldClickSearchButtonMenu()
+            shouldTypeOnSearchViewInput()
+            shouldRecyclerViewDisplay()
+        }
+    }
+
+    @Test
+    fun shouldShowErrorScreen() {
+        robots {
+            setupMovieRequestError()
+            initActivity()
+            shouldShouldErrorMessage()
         }
     }
 }

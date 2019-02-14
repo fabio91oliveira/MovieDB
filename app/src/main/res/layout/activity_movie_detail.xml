@@ -43,7 +43,7 @@
             android:layout_marginEnd="@dimen/margin_twenty_four"
             android:layout_marginRight="@dimen/margin_twenty_four"
             android:background="@drawable/background_circle"
-            android:padding="@dimen/margin_fourteen"
+            android:padding="@dimen/margin_twelve"
             android:src="@android:drawable/ic_menu_share"
             app:layout_constraintBottom_toBottomOf="@+id/imgBack"
             app:layout_constraintEnd_toEndOf="@id/imgBack"
