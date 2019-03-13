@@ -3,6 +3,8 @@ package oliveira.fabio.moviedbapp.feature.movielist.ui.custom
 import android.animation.Animator
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
+import android.os.Parcelable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -24,6 +26,26 @@ class SearchViewCustom(
 ) : ConstraintLayout(context, attrs) {
 
     private var isVisible = false
+
+    override fun onSaveInstanceState(): Parcelable? {
+        return Bundle().apply {
+            putParcelable("superState", super.onSaveInstanceState())
+            putBoolean("isVisible", isVisible)
+        }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state is Bundle) {
+            isVisible = state.getBoolean("isVisible")
+            if (isVisible) {
+                searchEditText.setText("")
+                searchOpenView.visibility = View.VISIBLE
+                searchEditText.requestFocus()
+                searchEditText.openKeyboard()
+            }
+        }
+        super.onRestoreInstanceState(BaseSavedState.EMPTY_STATE)
+    }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.view_search, this, true)
@@ -89,6 +111,14 @@ class SearchViewCustom(
         } else {
             searchOpenView.visibility = View.INVISIBLE
             searchEditText.setText("")
+        }
+    }
+
+    fun loading(isLoading: Boolean) {
+        if (isLoading && !searchEditText.text.toString().isEmpty()) {
+            searchProgressBar.animate().setDuration(200).alpha(1f).start()
+        } else {
+            searchProgressBar.animate().setDuration(200).alpha(0f).start()
         }
     }
 

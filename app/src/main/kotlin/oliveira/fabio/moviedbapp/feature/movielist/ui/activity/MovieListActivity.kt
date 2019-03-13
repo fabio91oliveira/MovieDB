@@ -37,6 +37,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
             unselectTabs()
             viewModel.setSearchByText(true)
             viewModel.getMovieByText(s.toString())
+            searchView.loading(true)
         }
     }
 
@@ -163,6 +164,7 @@ class MovieListActivity : AppCompatActivity(), MovieListAdapter.OnClickMovieList
                         }
                     }
                 }
+                searchView.loading(false)
                 hideLoading()
             }
         })
