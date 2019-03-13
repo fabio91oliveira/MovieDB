@@ -1,5 +1,7 @@
 package oliveira.fabio.moviedbapp.util.extensions
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -8,6 +10,7 @@ import android.text.style.StyleSpan
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -62,3 +65,15 @@ fun AppCompatImageView.loadImageByGlide(image: Any, width: Int, height: Int) {
             DrawableTransitionOptions.withCrossFade()
         ).into(this)
 }
+
+fun View.openKeyboard() =
+    (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(
+        InputMethodManager.SHOW_FORCED,
+        InputMethodManager.HIDE_IMPLICIT_ONLY
+    )
+
+fun View.hideKeyboard() =
+    (context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+        windowToken,
+        0
+    )
