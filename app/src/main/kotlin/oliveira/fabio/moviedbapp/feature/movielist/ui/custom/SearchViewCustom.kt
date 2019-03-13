@@ -1,0 +1,98 @@
+package oliveira.fabio.moviedbapp.feature.movielist.ui.custom
+
+import android.animation.Animator
+import android.content.Context
+import android.os.Build
+import android.text.TextWatcher
+import android.util.AttributeSet
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewAnimationUtils
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import kotlinx.android.synthetic.main.view_search.view.*
+import oliveira.fabio.moviedbapp.R
+import oliveira.fabio.moviedbapp.util.extensions.hideKeyboard
+import oliveira.fabio.moviedbapp.util.extensions.openKeyboard
+
+
+class SearchViewCustom(
+    context: Context,
+    attrs: AttributeSet
+) : ConstraintLayout(context, attrs) {
+
+    private var isVisible = false
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.view_search, this, true)
+        initClickListeners()
+    }
+
+    private fun initClickListeners() {
+        searchOpenButton.setOnClickListener { openSearch() }
+        searchBackButton.setOnClickListener { closeSearch() }
+        searchEditText.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    v?.hideKeyboard()
+                    container.requestFocus()
+                    return true
+                }
+                return false
+            }
+        })
+    }
+
+    private fun openSearch() {
+        searchEditText.setText("")
+        searchOpenView.visibility = View.VISIBLE
+        searchEditText.requestFocus()
+        searchEditText.openKeyboard()
+        isVisible = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val circularReveal = ViewAnimationUtils.createCircularReveal(
+                searchOpenView,
+                (searchOpenButton.right + searchOpenButton.left) / 2,
+                (searchOpenButton.top + searchOpenButton.bottom) / 2,
+                0f, width.toFloat()
+            )
+            circularReveal.duration = 300
+            circularReveal.start()
+        }
+    }
+
+    fun closeSearch() {
+        isVisible = false
+        searchEditText.hideKeyboard()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val circularConceal = ViewAnimationUtils.createCircularReveal(
+                searchOpenView,
+                (searchOpenButton.right + searchOpenButton.left) / 2,
+                (searchOpenButton.top + searchOpenButton.bottom) / 2,
+                width.toFloat(), 0f
+            )
+            circularConceal.duration = 300
+            circularConceal.start()
+
+            circularConceal.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationRepeat(animation: Animator?) = Unit
+                override fun onAnimationCancel(animation: Animator?) = Unit
+                override fun onAnimationStart(animation: Animator?) = Unit
+                override fun onAnimationEnd(animation: Animator?) {
+                    searchOpenView.visibility = View.INVISIBLE
+                    searchEditText.setText("")
+                    circularConceal.removeAllListeners()
+                }
+            })
+        } else {
+            searchOpenView.visibility = View.INVISIBLE
+            searchEditText.setText("")
+        }
+    }
+
+    fun setTextWatcherListener(textWatcher: TextWatcher) = searchEditText.addTextChangedListener(textWatcher)
+
+    fun isVisible() = isVisible
+}
